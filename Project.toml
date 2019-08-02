@@ -1,0 +1,7 @@
+name = "RemoteOM"
+uuid = "267a3364-b55e-11e9-2ce7-fd09b5f68a92"
+authors = ["Christian Kral <dr.christian.kral@gmail.com>"]
+version = "2.9.0"
+
+[deps]
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"

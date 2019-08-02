@@ -1,5 +1,6 @@
+__precompile__(true)
 module RemoteOM
-  # (C) Christian Kral, 2017-2019
+  # (C) Christian Kral, 2017-2019, BSD-3 license
   #
   # RemoteOM remote access to OpenModeloca from Julia
   #
@@ -41,8 +42,9 @@ module RemoteOM
   #   Now simulateOM returns to the orignal directory from where started
   # Version 2.1.0, 2017-09-30
   #   Added function to read result file
-  # Version 3.0.0, 2019-XX-XX
+  # Version 2.9.0, 2019-XX-XX
   #   Published open source under the name RemoteOM
+  #   Based on Python packages OMPython and DyMat
   #   https://gitlab.com/christiankral/RemoteOM.git
 
   using PyCall

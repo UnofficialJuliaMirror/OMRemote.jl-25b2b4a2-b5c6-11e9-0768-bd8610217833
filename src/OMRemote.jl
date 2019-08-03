@@ -2,15 +2,13 @@ __precompile__(true)
 module OMRemote
 
   # (C) Christian Kral, 2017-2019, BSD-3 license
-  # OMRemote remote access to OpenModeloca from Julia
+  # OMRemote remote access to run OpenModelica simulations from Julia
   # https://gitlab.com/christiankral/RemoteOM.git
-  
-  using PyCall
-  using Base
-  @pyimport OMPython
-  @pyimport DyMat
 
-  export envOM, simulateOM, loadResultOM
+  using OMJulia
+  using Base
+
+  export envOM, simulateOM
 
   function envOM(env...)
     # Set environment variables
@@ -67,11 +65,12 @@ module OMRemote
 
   `Tolerance` Simulation tolerance; default value = 1E-6
 
-  `NumberOfIntervals` Nuber of output intervals; default value = 500
+  `NumberOfIntervals` Number of output intervals; default value = 500
   """
   function simulateOM(model;sysLibs="Modelica",sysVers="",workFiles="",files="",
                       workDir="/work",simDir="/tmp/OpenModelica",
-                      StartTime=0,StopTime=0,Tolerance=1E-6,NumberOfIntervals=500)
+                      StartTime=0,StopTime=0,Tolerance=1E-6,
+                      NumberOfIntervals=500)
 
     localDir=pwd()
     # Load MSL and libraries (separated by :) and simulate model
@@ -85,9 +84,9 @@ module OMRemote
     rm(simDir,force=true,recursive=true)
     mkdir(simDir)
     cd(simDir)
-    omc = OMPython.OMCSessionZMQ()
+    omc = OMJulia.OMCSession()
     # Change directory in OM
-    omc[:sendExpression]("cd(\""*simDir*"\")")
+    OMJulia.sendExpression(omc, "cd(\""*simDir*"\")")
 
     # Set system directory
     # sysDir = ENV["OPENMODELICAHOME"]*"/"*sysdir*"/"
@@ -103,7 +102,7 @@ module OMRemote
         # In this case the version number is not treated at all
         if sysLib!=""
           print("  loadModel("*sysLib*")")
-          status = omc[:sendExpression]("loadModel("*sysLib*")")
+          OMJulia.sendExpression(omc, "loadModel("*sysLib*")")
           if status==true
             println(" successful")
           else
@@ -118,10 +117,10 @@ module OMRemote
         if sysLib!=""
           if sysVer==""
             print("  loadModel("*sysLib*")")
-            status = omc[:sendExpression]("loadModel("*sysLib*")")
+            status = OMJulia.sendExpression(omc, "loadModel("*sysLib*")")
           else
             print("  loadModel("*sysLib*",{\""*sysVer*"\"})")
-            status = omc[:sendExpression]("loadModel("*sysLib*",{\""*sysVer*"\"})")
+            status = OMJulia.sendExpression(omc, "loadModel("*sysLib*",{\""*sysVer*"\"})")
           end
           if status==true
             println(" successful")
@@ -137,9 +136,9 @@ module OMRemote
     # Load Modelica work files
     workFilesList = split(workFiles,":")
     for workFile in workFilesList
-      if workFile!=""
+      if workFile != ""
         print("  loadFile("*workDir*"/"*workFile*")")
-        status = omc[:loadFile](workDir*"/"*workFile)
+        OMJulia.sendExpression(omc, workDir*"/"*workFile)
         if status==true
           println(" successful")
         else
@@ -153,17 +152,17 @@ module OMRemote
     for file in filesList
       if file!=""
         print("  loadFile("*file*")")
-        status = omc[:loadFile](file)
+        status = OMJulia.sendExpression(omc, "loadfile(\"*file*\")")
         if status==true
-          println(" successful")
         else
           println(" failed")
+          println(" successful")
         end
       end
     end
 
     print("  instantiateModel("*model*")")
-    status=omc[:sendExpression]("instantiateModel("*model*")")
+    status = OMJulia.sendExpression(omc, "instantiateModel("*model*")")
     if status!=""
       println(" successful")
     else
@@ -183,47 +182,15 @@ module OMRemote
     end
     # Run simulaton
     print("  simulate("*model*simulateOpts*")")
-    status = omc[:sendExpression]("simulate("*model*simulateOpts*")")
+    status = OMJulia.sendExpression(omc, "simulate("*model*simulateOpts*")")
     if status!=""
       println(" successful")
     else
       println(" failed")
     end
 
-    # Copy result file to result folder and overwrite possibly existing file
-    resFile=workDir*"/"*model*resExt
-    println("  copy result file from: "*simDir*"/"*model*resExt)
-    println("                     to: "*resFile)
-    cp(simDir*"/"*model*resExt,resFile,remove_destination=true)
-    cd(localDir)
-
-    # Load result file
-    df = DyMat.DyMatFile(resFile)
-    # Time cannot be accessed when using var = df[:names]
-    return df
-  end
-
-  """
-  # Function call
-
-  `loadResultOM(resFile,resDir="/work")`
-
-  # Description
-
-  This function loads an OpenModelica result file by means of DyMat
-
-  # Variables
-
-  `resFile` OpenModelica results file including extension .mat
-
-  `resDir` Directory where result file is stored; default value = "/work"
-  """
-  function loadResultOM(resFile,resDir="/work")
-    println("  reading result file from: "*resDir*"/"*resFile)
-    # Load result file
-    df = DyMat.DyMatFile(resDir*"/"*resFile)
-    # Time cannot be accessed when using var = df[:names]
-    return df
+    # Return handle to omc
+    return omc
   end
 
 end

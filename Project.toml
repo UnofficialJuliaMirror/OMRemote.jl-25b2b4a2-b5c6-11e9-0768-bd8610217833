@@ -1,8 +1,8 @@
 name = "OMRemote"
 uuid = "25b2b4a2-b5c6-11e9-0768-bd8610217833"
 authors = ["Christian Kral <dr.christian.kral@gmail.com>"]
-version = "2.9.0"
+version = "2.9.1"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+OMJulia = "0f4fe800-344e-11e9-2949-fb537ad918e1"

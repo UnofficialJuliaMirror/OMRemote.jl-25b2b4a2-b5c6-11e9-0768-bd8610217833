@@ -24,14 +24,15 @@ module OMRemote
   """
   # Function call
 
-  `simulateOM(model;sysLibs="Modelica", sysVers="", workFiles="", files="",
-  workDir="/work", simDir="/tmp/OpenModelica",
-  StartTime=0, StopTime=0, Tolerance=1E-6)`
+  resFile = `simulateOM(model;sysLibs="Modelica",
+  sysVers = "", workFiles = "", files = "",
+  workDir = "/work", simDir = "/tmp/OpenModelica",
+  StartTime = 0, StopTime = 0, Tolerance = 1E-6, copy = false)`
 
   # Description
 
-  This function simulates and OpenModelica model and returns a result
-  variable read by DyMat
+  This function simulates and OpenModelica model and returns the file name
+  of the result file
 
   # Variables
 
@@ -66,6 +67,11 @@ module OMRemote
   `Tolerance` Simulation tolerance; default value = 1E-6
 
   `NumberOfIntervals` Number of output intervals; default value = 500
+
+  `copy` Copy simulation result created by OpenModelica to directory `workDir`,
+         if `true`; default value = false; in case of `true` the copied file
+         name is assigned to the return variable `resFile`, otherwise the
+         original file location created by OpenModelica is assigned to `resFile`
   """
   function simulateOM(model;sysLibs="Modelica",sysVers="",workFiles="",files="",
                       workDir="/work",simDir="/tmp/OpenModelica",
@@ -189,10 +195,18 @@ module OMRemote
       println(" failed")
     end
 
-    # Switch back to local directory
+    simFile = simDir*"/"*model*resExt
+    if copy
+      resFile = workDir*"/"*model*resExt
+      println("  copy result file from: "*simDir*"/"*model*resExt)
+      println("                     to: "*resFile)
+      cp(simFile,resFile,force=true)
+      # Return handle and result file
+      return resFile
+    else
+      return simFile
+    end
     cd(localDir)
-    # Return handle to omc
-    return omc
   end
 
 end

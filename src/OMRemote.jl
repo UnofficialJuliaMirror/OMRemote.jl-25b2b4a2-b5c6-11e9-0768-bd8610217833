@@ -1,9 +1,10 @@
 __precompile__(true)
-module RemoteOM
+module OMRemote
+
   # (C) Christian Kral, 2017-2019, BSD-3 license
-  #
-  # RemoteOM remote access to OpenModeloca from Julia
-  #
+  # OMRemote remote access to OpenModeloca from Julia
+  # https://gitlab.com/christiankral/RemoteOM.git
+  
   using PyCall
   using Base
   @pyimport OMPython

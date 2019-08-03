@@ -1,8 +1,8 @@
-# Version 2.9.0, 2019-XX-XX
+# Version 2.9.0, 2019-08-03
 
-- Published open source under the name RemoteOM
+- Published open source under the name OMRemote
 - Based on Python packages OMPython and DyMat
-- https://gitlab.com/christiankral/RemoteOM.git
+- https://gitlab.com/christiankral/OMRemote.git
 
 # Version 2.1.0, 2017-09-30
 

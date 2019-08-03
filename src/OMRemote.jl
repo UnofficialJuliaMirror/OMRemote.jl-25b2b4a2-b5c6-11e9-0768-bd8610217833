@@ -189,6 +189,8 @@ module OMRemote
       println(" failed")
     end
 
+    # Switch back to local directory
+    cd(localDir)
     # Return handle to omc
     return omc
   end

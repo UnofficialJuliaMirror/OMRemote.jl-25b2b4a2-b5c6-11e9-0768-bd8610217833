@@ -138,7 +138,7 @@ module OMRemote
     for workFile in workFilesList
       if workFile != ""
         print("  loadFile("*workDir*"/"*workFile*")")
-        OMJulia.sendExpression(omc, workDir*"/"*workFile)
+        OMJulia.sendExpression(omc, "loadFile("*workDir*"/"*workFile*")")
         if status==true
           println(" successful")
         else

@@ -196,7 +196,7 @@ module OMRemote
     end
 
     simFile = simDir*"/"*model*resExt
-    if copy == true
+    if copy
       resFile = workDir*"/"*model*resExt
       println("  copy result file from: "*simDir*"/"*model*resExt)
       println("                     to: "*resFile)

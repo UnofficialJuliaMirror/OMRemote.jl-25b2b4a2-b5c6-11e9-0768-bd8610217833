@@ -76,7 +76,7 @@ module OMRemote
   function simulateOM(model;sysLibs="Modelica",sysVers="",workFiles="",files="",
                       workDir="/work",simDir="/tmp/OpenModelica",
                       StartTime=0,StopTime=0,Tolerance=1E-6,
-                      NumberOfIntervals=500)
+                      NumberOfIntervals=500, copy=true)
 
     localDir=pwd()
     # Load MSL and libraries (separated by :) and simulate model
@@ -196,7 +196,7 @@ module OMRemote
     end
 
     simFile = simDir*"/"*model*resExt
-    if copy
+    if copy == true
       resFile = workDir*"/"*model*resExt
       println("  copy result file from: "*simDir*"/"*model*resExt)
       println("                     to: "*resFile)
